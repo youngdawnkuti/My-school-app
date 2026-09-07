@@ -1,15 +1,16 @@
 {
-  "name": "Quiz Zone Portal",
-  "short_name": "QuizZone",
-  "start_url": "./dashboard.html",
+  "name": "Student Space",
+  "short_name": "StudentSpace",
+  "start_url": "./Dashboard.html",
   "display": "standalone",
   "background_color": "#fff1f2",
   "theme_color": "#db2777",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
