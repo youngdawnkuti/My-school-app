@@ -1,7 +1,7 @@
 const CACHE_NAME = 'quiz-zone-v1';
 const ASSETS_TO_CACHE = [
   './',
-  './dashboard.html',
+  './index.html',
   './admin.html',
   './mathematics.html',
   './quiz.html',
