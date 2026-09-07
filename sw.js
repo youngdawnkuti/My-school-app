@@ -1,27 +1,32 @@
-const CACHE_NAME = 'quiz-zone-v1';
+const CACHE_NAME = 'student-space-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './admin.html',
   './mathematics.html',
   './quiz.html',
-  './questions.js'
+  './questions.js',
+  './manifest.json',
+  './icon.png'
 ];
 
-// Install Service Worker and cache all assets
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
+  self.skipWaiting();
 });
 
-// Serve cached files when offline
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
+      // Return cached version or attempt network load
+      return cachedResponse || fetch(e.request).catch(() => {
+        // Fallback to offline index.html if request fails
+        return caches.match('./index.html');
+      });
     })
   );
 });
