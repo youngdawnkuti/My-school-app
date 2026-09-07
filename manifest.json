@@ -1,16 +1,21 @@
 {
-  "name": "Student Space",
-  "short_name": "StudentSpace",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#fff1f2",
-  "theme_color": "#db2777",
+  "short_name": "Student Space",
+  "name": "Student Space App",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#fff0f5",
+  "theme_color": "#db2777",
+  "display": "standalone",
+  "orientation": "portrait"
 }
