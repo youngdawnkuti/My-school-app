@@ -1,25 +1,3 @@
-// Add Firebase SDKs dynamically if not already loaded
-if (typeof firebase === 'undefined') {
-  const scriptApp = document.createElement('script');
-  scriptApp.src = "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js";
-  document.head.appendChild(scriptApp);
-
-  const scriptStore = document.createElement('script');
-  scriptStore.src = "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js";
-  document.head.appendChild(scriptStore);
-}
-
-// Your exact Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBbVnLPE1r48V9aFXOrnTwGsS7fgPRsKKc",
-  authDomain: "quiz-zone-7e91c.firebaseapp.com",
-  projectId: "quiz-zone-7e91c",
-  storageBucket: "quiz-zone-7e91c.firebasestorage.app",
-  messagingSenderId: "988325081403",
-  appId: "1:988325081403:web:3b54829d0f5ad9945f471e",
-  measurementId: "G-Z82HSEHYDD"
-};
-// questions.js - Centralized Question Bank for Quiz Zone
 
 const QUESTION_BANK = {
   mathematics: {
