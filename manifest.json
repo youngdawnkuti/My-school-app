@@ -1,7 +1,7 @@
 {
   "name": "Student Space",
   "short_name": "StudentSpace",
-  "start_url": "./Dashboard.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fff1f2",
   "theme_color": "#db2777",
