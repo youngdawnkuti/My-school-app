@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subject Dashboard - Quiz Zone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink-dark: #831843;
+      --pink-main: #db2777;
+      --pink-mid: #f472b6;
+      --pink-light: #fbcfe8;
+      --pink-bg: #fff1f2;
+      --white: #ffffff;
+      --font-readable: 'Fredoka', system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-readable); }
+
+    body {
+      background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 50%, #db2777 100%);
+      min-height: 100vh;
+      padding: 16px;
+      color: var(--pink-dark);
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      border: 3px solid var(--pink-light);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .back-btn {
+      background: var(--pink-main);
+      color: var(--white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      text-transform: capitalize;
+      color: var(--pink-dark);
+    }
+
+    /* TAB NAVIGATION SELECTOR */
+    .view-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: var(--pink-bg);
+      padding: 6px;
+      border-radius: 16px;
+      border: 2px solid var(--pink-light);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 10px 6px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--pink-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      background: var(--pink-main);
+      color: var(--white);
+      box-shadow: 0 4px 10px rgba(219, 39, 119, 0.2);
+    }
+
+    /* VIEW PANELS */
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* 1. LEVEL GRID */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .level-card {
+      background: var(--white);
+      border: 3px solid var(--pink-light);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .level-card.locked {
+      opacity: 0.5;
+      filter: grayscale(1);
+      pointer-events: none;
+    }
+
+    .level-title { font-size: 1.15rem; font-weight: 700; }
+    .stats-badge { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
+    .play-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background: var(--pink-main);
+      color: var(--white);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    /* 2. PODIUM LEADERBOARD STYLING (MATCHING SCREENSHOT) */
+    .podium-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .podium-card {
+      background: var(--white);
+      border: 2px solid var(--pink-light);
+      border-radius: 16px;
+      padding: 14px 8px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(219, 39, 119, 0.08);
+      flex: 1;
+    }
+
+    .podium-card.rank-1 {
+      background: #fef08a;
+      border: 3px solid #facc15;
+      padding: 20px 8px;
+    }
+
+    .podium-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--pink-dark);
+      margin-top: 4px;
+    }
+
+    .podium-score {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--pink-dark);
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .leader-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--white);
+      border: 2px solid var(--pink-light);
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* 3. GROWTH GRAPH & TIMELINE STYLING */
+    .chart-container {
+      background: var(--white);
+      border: 2px solid var(--pink-light);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .chart-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--pink-dark);
+      margin-bottom: 12px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 180px !important;
+    }
+
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .timeline-card {
+      background: var(--white);
+      border-left: 5px solid var(--pink-main);
+      border-top: 2px solid var(--pink-light);
+      border-right: 2px solid var(--pink-light);
+      border-bottom: 2px solid var(--pink-light);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .timeline-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--pink-dark);
+      margin-top: 2px;
+    }
+
+    .timeline-average {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--pink-main);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-nav">
+      <h1 id="subjectTitle">Top Scholars</h1>
+      <a href="index.html" class="back-btn">Back Home</a>
+    </div>
+
+    <div class="view-selector">
+      <button class="tab-btn active" onclick="switchTab('levels')">🎮 Levels</button>
+      <button class="tab-btn" onclick="switchTab('leaderboard')">🏆 Leaderboard</button>
+      <button class="tab-btn" onclick="switchTab('growth')">📈 Growth Tracker</button>
+    </div>
+
+    <div class="view-panel active" id="panel-levels">
+      <div class="level-grid" id="levelContainer"></div>
+    </div>
+
+    <div class="view-panel" id="panel-leaderboard">
+      <div class="podium-container">
+        <div class="podium-card">
+          <div>🥈</div>
+          <div class="podium-name">Liam</div>
+          <div class="podium-score">940 pts</div>
+        </div>
+        <div class="podium-card rank-1">
+          <div>👑 🥇</div>
+          <div class="podium-name">Alex</div>
+          <div class="podium-score">980 pts</div>
+        </div>
+        <div class="podium-card">
+          <div>🥉</div>
+          <div class="podium-name">Mia</div>
+          <div class="podium-score">910 pts</div>
+        </div>
+      </div>
+
+      <div class="leaderboard-list">
+        <div class="leader-row">
+          <span>1. Alex</span>
+          <span style="color: var(--pink-dark);">980 pts</span>
+        </div>
+        <div class="leader-row">
+          <span>2. Liam</span>
+          <span style="color: var(--pink-dark);">940 pts</span>
+        </div>
+        <div class="leader-row">
+          <span>3. Mia</span>
+          <span style="color: var(--pink-dark);">910 pts</span>
+        </div>
+        <div class="leader-row">
+          <span>4. Noah</span>
+          <span style="color: var(--pink-dark);">880 pts</span>
+        </div>
+        <div class="leader-row">
+          <span>5. Emma</span>
+          <span style="color: var(--pink-dark);">850 pts</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="view-panel" id="panel-growth">
+      <div class="chart-container">
+        <div class="chart-title">📊 Overall Performance Trend</div>
+        <canvas id="growthChart"></canvas>
+      </div>
+
+      <div class="timeline-container" id="timelineContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeSubject = urlParams.get('subject') || 'mathematics';
+
+    // Switch View Panel
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`panel-${tabName}`).classList.add('active');
+
+      if (tabName === 'levels') renderLevels();
+      if (tabName === 'growth') renderGrowthTimeline();
+    }
+
+    // 1. RENDER LEVELS
+    function getProgressData() {
+      const stored = localStorage.getItem('studentQuizProgress');
+      if (stored) return JSON.parse(stored);
+
+      const initialData = {};
+      initialData[activeSubject] = {};
+      for (let i = 1; i <= 10; i++) {
+        initialData[activeSubject][`level${i}`] = {
+          unlocked: i === 1,
+          highScore: 0,
+          attempts: 0
+        };
+      }
+      localStorage.setItem('studentQuizProgress', JSON.stringify(initialData));
+      return initialData;
+    }
+
+    function renderLevels() {
+      const data = getProgressData();
+      const subjectData = data[activeSubject] || {};
+      const container = document.getElementById('levelContainer');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 10; i++) {
+        const lvl = subjectData[`level${i}`] || { unlocked: i === 1, highScore: 0, attempts: 0 };
+        const card = document.createElement('div');
+        card.className = `level-card ${lvl.unlocked ? '' : 'locked'}`;
+
+        card.innerHTML = `
+          <div class="level-title">${lvl.unlocked ? '⭐' : '🔒'} Level ${i}</div>
+          <div class="stats-badge">High Score: ${lvl.highScore}%</div>
+          <div class="stats-badge">Attempts: ${lvl.attempts}</div>
+          ${lvl.unlocked ? `<a href="quiz.html?subject=${activeSubject}&level=${i}" class="play-btn">Start Quiz</a>` : ''}
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    // 2. RENDER GROWTH GRAPH & TIMELINE
+    function renderGrowthTimeline() {
+      const container = document.getElementById('timelineContainer');
+      
+      const mockLogs = [
+        { date: "02-09-2026", runningAvg: 51.001 },
+        { date: "01-09-2026", runningAvg: 50.002 }
+      ];
+
+      container.innerHTML = mockLogs.map(log => `
+        <div class="timeline-card">
+          <div>
+            <div class="timeline-date">🗓️ ${log.date}</div>
+            <div class="timeline-title">Total Average Score</div>
+          </div>
+          <div class="timeline-average">${log.runningAvg.toFixed(3)}%</div>
+        </div>
+      `).join('');
+
+      drawChart(mockLogs);
+    }
+
+    // Native Canvas Chart Renderer
+    function drawChart(logs) {
+      const canvas = document.getElementById('growthChart');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = 180;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const points = logs.slice().reverse();
+      const padding = 30;
+      const graphWidth = canvas.width - padding * 2;
+      const graphHeight = canvas.height - padding * 2;
+
+      // Draw Axis Lines
+      ctx.beginPath();
+      ctx.strokeStyle = '#fbcfe8';
+      ctx.lineWidth = 2;
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, canvas.height - padding);
+      ctx.lineTo(canvas.width - padding, canvas.height - padding);
+      ctx.stroke();
+
+      // Plot Points
+      ctx.beginPath();
+      ctx.strokeStyle = '#db2777';
+      ctx.lineWidth = 4;
+
+      points.forEach((pt, idx) => {
+        const x = padding + (idx / (points.length - 1 || 1)) * graphWidth;
+        const y = (canvas.height - padding) - ((pt.runningAvg - 40) / 30) * graphHeight;
+
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Draw Points
+      points.forEach((pt, idx) => {
+        const x = padding + (idx / (points.length - 1 || 1)) * graphWidth;
+        const y = (canvas.height - padding) - ((pt.runningAvg - 40) / 30) * graphHeight;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#831843';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+    }
+
+    renderLevels();
+  </script>
+</body>
+</html>

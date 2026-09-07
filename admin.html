@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Question Manager - Quiz Zone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink-dark: #831843;
+      --pink-main: #db2777;
+      --pink-border: #fbcfe8;
+      --pink-bg: #fff0f5;
+      --white: #ffffff;
+      --green: #15803d;
+      --red-bg: #fee2e2;
+      --red-text: #b91c1c;
+      --font-readable: 'Fredoka', system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-readable); }
+
+    body {
+      background-color: var(--pink-bg);
+      padding: 20px;
+      color: var(--pink-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .admin-container, .card {
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      padding: 24px;
+      border-radius: 20px;
+      border: 2px solid var(--pink-border);
+      box-shadow: 0 8px 20px rgba(219, 39, 119, 0.08);
+    }
+
+    /* Hide dashboard initially until passcode is verified */
+    #dashboard {
+      display: none;
+    }
+
+    h1, h2 { margin-bottom: 20px; font-size: 1.6rem; text-align: center; }
+
+    .form-group {
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label { font-weight: 700; font-size: 0.9rem; }
+
+    input, select, textarea {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 2px solid var(--pink-border);
+      font-size: 0.95rem;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--pink-main);
+    }
+
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .add-btn, .login-btn {
+      width: 100%;
+      background: var(--pink-main);
+      color: var(--white);
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .add-btn:hover, .login-btn:hover { background: var(--pink-dark); }
+
+    .success-msg {
+      display: none;
+      background: #dcfce7;
+      color: var(--green);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .manager-section {
+      margin-top: 30px;
+      border-top: 2px dashed var(--pink-border);
+      padding-top: 20px;
+    }
+
+    .q-card {
+      background: var(--pink-bg);
+      border: 1px solid var(--pink-border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .q-info {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .delete-btn {
+      background: var(--red-bg);
+      color: var(--red-text);
+      border: 1px solid var(--red-text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background: var(--red-text);
+      color: var(--white);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PASSCODE PROTECTION CARD -->
+  <div id="loginCard" class="card">
+    <h2>🔒 Admin Access</h2>
+    <div class="form-group">
+      <label for="passcode">Enter Passcode</label>
+      <input type="password" id="passcode" placeholder="Enter secret code" onkeydown="if(event.key==='Enter') login()">
+    </div>
+    <button class="login-btn" onclick="login()">Access Dashboard</button>
+    <p id="loginErr" style="color:var(--red-text); display:none; margin-top:10px; text-align:center; font-weight:700;">Incorrect passcode!</p>
+  </div>
+
+  <!-- MAIN ADMIN DASHBOARD -->
+  <div class="admin-container" id="dashboard">
+    <h1>➕ Add New Question</h1>
+
+    <div class="success-msg" id="successMsg">✅ Question added successfully!</div>
+
+    <form id="questionForm">
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="subjectSelect" required>
+          <option value="mathematics">Mathematics</option>
+          <option value="science">Science</option>
+          <option value="english">English</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Level</label>
+        <select id="levelSelect" required>
+          <option value="1">Level 1</option>
+          <option value="2">Level 2</option>
+          <option value="3">Level 3</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Question Text</label>
+        <textarea id="questionInput" rows="2" placeholder="e.g., What is 12 ÷ 4?" required></textarea>
+      </div>
+
+      <div class="form-group options-group">
+        <label>Options</label>
+        <input type="text" id="opt0" placeholder="Option 1" required>
+        <input type="text" id="opt1" placeholder="Option 2" required>
+        <input type="text" id="opt2" placeholder="Option 3" required>
+        <input type="text" id="opt3" placeholder="Option 4" required>
+      </div>
+
+      <div class="form-group">
+        <label>Correct Answer</label>
+        <select id="correctIndex" required>
+          <option value="0">Option 1</option>
+          <option value="1">Option 2</option>
+          <option value="2">Option 3</option>
+          <option value="3">Option 4</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Explanation</label>
+        <textarea id="explanationInput" rows="2" placeholder="Why is this answer correct?" required></textarea>
+      </div>
+
+      <button type="submit" class="add-btn">Add Question ➔</button>
+    </form>
+
+    <div class="manager-section">
+      <h2>🗑️ Manage Stored Questions</h2>
+      <div id="questionsList"></div>
+    </div>
+  </div>
+
+  <script>
+    // PASSCODE AUTHENTICATION
+    window.login = function() {
+      const pin = document.getElementById("passcode").value;
+      if (pin === "1234") {
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+      } else {
+        document.getElementById("loginErr").style.display = "block";
+      }
+    };
+
+    // Load and render stored questions
+    function renderStoredQuestions() {
+      const listContainer = document.getElementById('questionsList');
+      listContainer.innerHTML = '';
+
+      let customBank = JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
+      let count = 0;
+
+      for (const subject in customBank) {
+        for (const level in customBank[subject]) {
+          customBank[subject][level].forEach((item, index) => {
+            count++;
+            const card = document.createElement('div');
+            card.className = 'q-card';
+            card.innerHTML = `
+              <div class="q-info">
+                <strong>[${subject.toUpperCase()} - L${level}]</strong> ${item.q}
+              </div>
+              <button class="delete-btn" onclick="deleteQuestion('${subject}', '${level}', ${index})">Delete</button>
+            `;
+            listContainer.appendChild(card);
+          });
+        }
+      }
+
+      if (count === 0) {
+        listContainer.innerHTML = '<p style="text-align:center; color: var(--pink-dark);">No custom questions added yet.</p>';
+      }
+    }
+
+    // Delete question by index and update localStorage
+    function deleteQuestion(subject, level, index) {
+      let customBank = JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
+
+      if (customBank[subject] && customBank[subject][level]) {
+        customBank[subject][level].splice(index, 1);
+
+        if (customBank[subject][level].length === 0) {
+          delete customBank[subject][level];
+        }
+
+        localStorage.setItem('customQuestionBank', JSON.stringify(customBank));
+        renderStoredQuestions();
+      }
+    }
+
+    // Add new question logic
+    document.getElementById('questionForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const subject = document.getElementById('subjectSelect').value;
+      const level = document.getElementById('levelSelect').value;
+
+      const newQuestion = {
+        q: document.getElementById('questionInput').value,
+        options: [
+          document.getElementById('opt0').value,
+          document.getElementById('opt1').value,
+          document.getElementById('opt2').value,
+          document.getElementById('opt3').value
+        ],
+        answer: parseInt(document.getElementById('correctIndex').value),
+        explanation: document.getElementById('explanationInput').value
+      };
+
+      let customBank = JSON.parse(localStorage.getItem('customQuestionBank') || '{}');
+
+      if (!customBank[subject]) customBank[subject] = {};
+      if (!customBank[subject][level]) customBank[subject][level] = [];
+
+      customBank[subject][level].push(newQuestion);
+      localStorage.setItem('customQuestionBank', JSON.stringify(customBank));
+
+      const msg = document.getElementById('successMsg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 2000);
+
+      document.getElementById('questionForm').reset();
+      renderStoredQuestions();
+    });
+
+    renderStoredQuestions();
+  </script>
+</body>
+</html>
