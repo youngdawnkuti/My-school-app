@@ -1,4 +1,4 @@
-const CACHE_NAME = 'student-space-v2';
+const CACHE_NAME = 'student-space-v3'; // bump this — forces the browser to treat it as a new SW and re-cache everything fresh
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -10,11 +10,22 @@ const ASSETS_TO_CACHE = [
   './icon.png'
 ];
 
-// Install Event - Pre-cache all files
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Only cache successful responses — never let a 404/error get cached as if it were valid
+      await Promise.all(ASSETS_TO_CACHE.map(async (url) => {
+        try {
+          const response = await fetch(url);
+          if (response.ok) {
+            await cache.put(url, response);
+          } else {
+            console.warn(`Skipped caching ${url} — server returned ${response.status}`);
+          }
+        } catch (err) {
+          console.warn(`Skipped caching ${url} — fetch failed`, err);
+        }
+      }));
     })
   );
   self.skipWaiting();
